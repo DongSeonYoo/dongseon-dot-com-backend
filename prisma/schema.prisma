@@ -9,9 +9,9 @@ datasource db {
 
 model AccountTb {
   id          Int         @id @default(autoincrement())
-  loginId     String      @map("login_id") @db.VarChar(30)
+  loginId     String      @map("login_id") @db.VarChar(30) @unique
   password    String      @db.Char(60)
-  email       String      @db.VarChar(256)
+  email       String      @db.VarChar(256) @unique
   name        String      @db.VarChar(10)
   phoneNumber String      @map("phone_number") @db.Char(11)
   profileImg  String      @map("profile_img")
