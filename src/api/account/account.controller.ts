@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
@@ -8,6 +8,7 @@ import {
 import { SigninRequestDto } from './dto/signin.dto';
 import { ResponseEntity } from 'src/common/dto/common-response.dto';
 import { Response } from 'express';
+import { JwtAccessGuard } from '../auth/guard/jwt-access.guard';
 
 @ApiTags('account Api')
 @Controller('account')
@@ -28,8 +29,16 @@ export class AccountController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const { accessToken } = await this.accountService.signIn(body);
-    res.cookie('access_token', accessToken);
+    res.cookie('accessToken', accessToken);
 
     return ResponseEntity.SUCCESS();
+  }
+
+  @Post('/logout')
+  @UseGuards(JwtAccessGuard)
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('accessToken');
+
+    return ResponseEntity.SUCCESS('로그아웃 성공요');
   }
 }

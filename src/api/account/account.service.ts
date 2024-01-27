@@ -75,6 +75,20 @@ export class AccountService {
     return { accessToken };
   }
 
+  async findUserByIdx(userIdx: number) {
+    const foundUser = await this.prismaService.account.findUnique({
+      where: {
+        id: userIdx,
+      },
+    });
+
+    if (!foundUser) {
+      throw new BadRequestException('해당하는 사용자가 존재하지 않습니다');
+    }
+
+    return foundUser;
+  }
+
   private async checkDuplicateEmail(email: string) {
     const foundAccount = await this.prismaService.account.findUnique({
       where: {
