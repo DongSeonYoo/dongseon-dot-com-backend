@@ -48,6 +48,7 @@ export class AccountService {
     const user = await this.prismaService.account.findUnique({
       where: {
         loginId,
+        deletedAt: null,
       },
       select: {
         id: true,
@@ -91,18 +92,19 @@ export class AccountService {
     return foundUser;
   }
 
-  async deleteUser(user: IAuth.IJwtPayload) {
+  async deleteUser(user: IAuth.IJwtPayload): Promise<void> {
     const foundUser = await this.findUserByIdx(user.id);
 
-    return this.prismaService.account.update({
+    await this.prismaService.account.update({
       data: {
-        loginId: '_' + foundUser.loginId,
-        email: '_' + foundUser.email,
+        loginId: foundUser.loginId,
+        email: foundUser.email,
         deletedAt: new Date(),
       },
       where: {
         id: user.id,
       },
+      select: {},
     });
   }
 
@@ -118,7 +120,7 @@ export class AccountService {
     }
   }
 
-  private async checkDuplicateEmail(email: string) {
+  async checkDuplicateEmail(email: string) {
     const foundAccount = await this.prismaService.account.findUnique({
       where: {
         email,

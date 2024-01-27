@@ -64,10 +64,17 @@ export class AccountController {
     return ResponseEntity.SUCCESS('회원탈퇴 성공요');
   }
 
-  @Get('/duplicate/:loginId')
+  @Get('/duplicate/login-id/:loginId')
   async checkDuplicateLoginId(@Param('loginId') loginId: string) {
     await this.accountService.checkDuplicateLoginId(loginId);
 
     return ResponseEntity.SUCCESS('사용 가능한 아이디입니다');
+  }
+
+  @Get('/duplicate/email/:email')
+  async checkDulicateEmail(@Param('email') email: string) {
+    await this.accountService.checkDuplicateEmail(email);
+
+    return ResponseEntity.SUCCESS('사용 가능한 이메일입니다');
   }
 }
