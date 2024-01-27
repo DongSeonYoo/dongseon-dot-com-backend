@@ -20,7 +20,7 @@ export class ResponseEntity<T> {
     return new ResponseEntity<string>(httpStatus, message, '');
   }
 
-  static SUCCESS_WITH<T>(data: T, message: string): ResponseEntity<T> {
+  static SUCCESS_WITH<T>(data: T, message: string = ''): ResponseEntity<T> {
     return new ResponseEntity<T>(HttpStatus.OK, message, data);
   }
 
