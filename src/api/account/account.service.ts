@@ -1,5 +1,9 @@
 import * as bcrypt from 'bcrypt';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { SignupRequestDto } from './dto/signup.dto';
 import { SigninRequestDto } from './dto/signin.dto';
@@ -7,6 +11,7 @@ import { IAccount } from './interface/account.interface';
 import { AuthService } from '../auth/auth.service';
 import { PROVIDER } from './account-provider.enum';
 import { IAuth } from '../auth/interface/auth.interface';
+import { FindLoginIdDto } from './dto/find-loginid.dto';
 
 @Injectable()
 export class AccountService {
@@ -130,5 +135,25 @@ export class AccountService {
     if (foundAccount) {
       throw new BadRequestException('해당하는 이메일이 이미 존재합니다');
     }
+  }
+
+  async findLoginId(
+    findLoginIdDto: FindLoginIdDto,
+  ): Promise<IAccount.IFindLoginIdResponse> {
+    const foundLoginId = await this.prismaService.account.findUnique({
+      where: {
+        ...findLoginIdDto,
+        deletedAt: null,
+      },
+      select: {
+        loginId: true,
+      },
+    });
+
+    if (!foundLoginId) {
+      throw new NotFoundException('해당하는 회원이 존재하지 않습니다');
+    }
+
+    return foundLoginId;
   }
 }

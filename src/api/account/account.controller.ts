@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -16,10 +17,11 @@ import {
 } from './dto/signup.dto';
 import { SigninRequestDto } from './dto/signin.dto';
 import { ResponseEntity } from 'src/common/dto/common-response.dto';
-import { Response } from 'express';
+import { Response, query } from 'express';
 import { JwtAccessGuard } from '../auth/guard/jwt-access.guard';
 import { User } from 'src/common/decorator/user.decorator';
 import { IAuth } from '../auth/interface/auth.interface';
+import { FindLoginIdDto } from './dto/find-loginid.dto';
 
 @ApiTags('account Api')
 @Controller('account')
@@ -76,5 +78,12 @@ export class AccountController {
     await this.accountService.checkDuplicateEmail(email);
 
     return ResponseEntity.SUCCESS('사용 가능한 이메일입니다');
+  }
+
+  @Get('/find-id')
+  async findLoginId(@Query() query: FindLoginIdDto) {
+    const foundLoginId = await this.accountService.findLoginId(query);
+
+    return ResponseEntity.SUCCESS_WITH(foundLoginId);
   }
 }

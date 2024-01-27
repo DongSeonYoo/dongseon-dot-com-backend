@@ -6,4 +6,8 @@ export namespace IAccount {
   export interface ISigninResponse {
     accessToken: string;
   }
+
+  export interface IFindLoginIdResponse {
+    loginId: string;
+  }
 }
