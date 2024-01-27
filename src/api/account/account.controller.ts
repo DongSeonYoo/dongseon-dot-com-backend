@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -17,6 +18,8 @@ import { SigninRequestDto } from './dto/signin.dto';
 import { ResponseEntity } from 'src/common/dto/common-response.dto';
 import { Response } from 'express';
 import { JwtAccessGuard } from '../auth/guard/jwt-access.guard';
+import { User } from 'src/common/decorator/user.decorator';
+import { IAuth } from '../auth/interface/auth.interface';
 
 @ApiTags('account Api')
 @Controller('account')
@@ -48,6 +51,17 @@ export class AccountController {
     res.clearCookie('accessToken');
 
     return ResponseEntity.SUCCESS('로그아웃 성공요');
+  }
+
+  @Delete('/')
+  @UseGuards(JwtAccessGuard)
+  async deleteUser(
+    @User() user: IAuth.IJwtPayload,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.accountService.deleteUser(user);
+
+    return ResponseEntity.SUCCESS('회원탈퇴 성공요');
   }
 
   @Get('/duplicate/:loginId')

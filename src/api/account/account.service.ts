@@ -6,6 +6,7 @@ import { SigninRequestDto } from './dto/signin.dto';
 import { IAccount } from './interface/account.interface';
 import { AuthService } from '../auth/auth.service';
 import { PROVIDER } from './account-provider.enum';
+import { IAuth } from '../auth/interface/auth.interface';
 
 @Injectable()
 export class AccountService {
@@ -79,6 +80,7 @@ export class AccountService {
     const foundUser = await this.prismaService.account.findUnique({
       where: {
         id: userIdx,
+        deletedAt: null,
       },
     });
 
@@ -89,16 +91,19 @@ export class AccountService {
     return foundUser;
   }
 
-  private async checkDuplicateEmail(email: string) {
-    const foundAccount = await this.prismaService.account.findUnique({
+  async deleteUser(user: IAuth.IJwtPayload) {
+    const foundUser = await this.findUserByIdx(user.id);
+
+    return this.prismaService.account.update({
+      data: {
+        loginId: '_' + foundUser.loginId,
+        email: '_' + foundUser.email,
+        deletedAt: new Date(),
+      },
       where: {
-        email,
+        id: user.id,
       },
     });
-
-    if (foundAccount) {
-      throw new BadRequestException('해당하는 이메일이 이미 존재합니다');
-    }
   }
 
   async checkDuplicateLoginId(loginId: string) {
@@ -110,6 +115,18 @@ export class AccountService {
 
     if (foundAccount) {
       throw new BadRequestException('해당하는 아이디가 이미 존재합니다');
+    }
+  }
+
+  private async checkDuplicateEmail(email: string) {
+    const foundAccount = await this.prismaService.account.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (foundAccount) {
+      throw new BadRequestException('해당하는 이메일이 이미 존재합니다');
     }
   }
 }
