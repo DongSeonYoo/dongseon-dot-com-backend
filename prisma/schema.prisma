@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model AccountTb {
+model Account {
   id          Int         @id @default(autoincrement())
   loginId     String      @map("login_id") @db.VarChar(30) @unique
   password    String      @db.Char(60)
@@ -19,14 +19,14 @@ model AccountTb {
   createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt   DateTime?   @map("deleted_at") @db.Timestamptz(6)
-  commentTb   CommentTb[]
-  postTb      PostTb[]
-  replyTb     ReplyTb[]
+  commentTb   Comment[]
+  postTb      Post[]
+  replyTb     Reply[]
 
   @@map("account_tb")
 }
 
-model CommentTb {
+model Comment {
   id        Int       @id @default(autoincrement())
   accountId Int       @default(autoincrement()) @map("account_id")
   postId    Int       @default(autoincrement()) @map("post_id")
@@ -34,26 +34,26 @@ model CommentTb {
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
-  accountTb AccountTb @relation(fields: [accountId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_tb_to_comment_tb")
-  postTb    PostTb    @relation(fields: [postId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_post_tb_to_comment_tb")
-  replyTb   ReplyTb[]
+  accountTb Account @relation(fields: [accountId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_tb_to_comment_tb")
+  postTb    Post    @relation(fields: [postId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_post_tb_to_comment_tb")
+  replyTb   Reply[]
 
   @@map("comment_tb")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model PostImgTb {
+model PostImg {
   id        Int      @id @default(autoincrement())
   postId    Int      @default(autoincrement()) @map("post_id")
   postImg   String?  @map("post_img")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  postTb    PostTb   @relation(fields: [postId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_post_tb_to_post_img_tb")
+  postTb    Post   @relation(fields: [postId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_post_tb_to_post_img_tb")
 
   @@map("post_img_tb")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model PostTb {
+model Post {
   id        Int         @id @default(autoincrement())
   title     String      @db.VarChar(100)
   content   String
@@ -61,15 +61,15 @@ model PostTb {
   updatedAt DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
   accountId Int         @default(autoincrement()) @map("account_id")
   deletedAt DateTime?   @map("deleted_at") @db.Timestamptz(6)
-  commentTb CommentTb[]
-  postImgTb PostImgTb[]
-  accountTb AccountTb   @relation(fields: [accountId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_tb_to_post_tb")
+  commentTb Comment[]
+  postImgTb PostImg[]
+  accountTb Account   @relation(fields: [accountId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_tb_to_post_tb")
 
   @@map("post_tb")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model ReplyTb {
+model Reply {
   id        Int       @id @default(autoincrement())
   commentId Int       @default(autoincrement()) @map("comment_id")
   content   String
@@ -77,8 +77,8 @@ model ReplyTb {
   updatedAt DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
   accountId Int       @default(autoincrement()) @map("account_id")
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
-  accountTb AccountTb @relation(fields: [accountId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_tb_to_reply_tb")
-  commentTb CommentTb @relation(fields: [commentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_comment_tb_to_reply_tb")
+  accountTb Account @relation(fields: [accountId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_account_tb_to_reply_tb")
+  commentTb Comment @relation(fields: [commentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_comment_tb_to_reply_tb")
 
   @@map("reply_tb")
 }
