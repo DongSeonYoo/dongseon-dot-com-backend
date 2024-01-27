@@ -101,7 +101,7 @@ export class AccountService {
     }
   }
 
-  private async checkDuplicateLoginId(loginId: string) {
+  async checkDuplicateLoginId(loginId: string) {
     const foundAccount = await this.prismaService.account.findUnique({
       where: {
         loginId,

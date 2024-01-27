@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AccountService } from './account.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
@@ -40,5 +48,12 @@ export class AccountController {
     res.clearCookie('accessToken');
 
     return ResponseEntity.SUCCESS('로그아웃 성공요');
+  }
+
+  @Get('/duplicate/:loginId')
+  async checkDuplicateLoginId(@Param('loginId') loginId: string) {
+    await this.accountService.checkDuplicateLoginId(loginId);
+
+    return ResponseEntity.SUCCESS('사용 가능한 아이디입니다');
   }
 }
