@@ -13,6 +13,7 @@ import { PROVIDER } from './account-provider.enum';
 import { IAuth } from '../auth/interface/auth.interface';
 import { FindLoginIdDto } from './dto/find-loginid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ModifyProfileDto } from './dto/modify-profile.dto';
 
 @Injectable()
 export class AccountService {
@@ -196,5 +197,19 @@ export class AccountService {
     }
 
     return result;
+  }
+
+  async modifyUserProfile(
+    modifyProfileDto: ModifyProfileDto,
+    user: IAuth.IJwtPayload,
+  ) {
+    await this.prismaService.account.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        ...modifyProfileDto,
+      },
+    });
   }
 }

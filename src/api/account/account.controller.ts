@@ -27,6 +27,7 @@ import { FindLoginIdDto } from './dto/find-loginid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { IsNumber } from 'class-validator';
 import { IAccount } from './interface/account.interface';
+import { ModifyProfileDto } from './dto/modify-profile.dto';
 
 @ApiTags('account Api')
 @Controller('account')
@@ -106,5 +107,16 @@ export class AccountController {
     const userProfile = await this.accountService.getUserProfile(userIdx);
 
     return ResponseEntity.SUCCESS_WITH(userProfile);
+  }
+
+  @Put('/')
+  @UseGuards(JwtAccessGuard)
+  async modifyUserProfile(
+    @Body() body: ModifyProfileDto,
+    @User() user: IAuth.IJwtPayload,
+  ) {
+    await this.accountService.modifyUserProfile(body, user);
+
+    return ResponseEntity.SUCCESS('수정 성공요');
   }
 }
