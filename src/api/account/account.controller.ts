@@ -19,15 +19,13 @@ import {
 } from './dto/signup.dto';
 import { SigninRequestDto } from './dto/signin.dto';
 import { ResponseEntity } from 'src/common/dto/common-response.dto';
-import { Response, query } from 'express';
+import { Response } from 'express';
 import { JwtAccessGuard } from '../auth/guard/jwt-access.guard';
 import { User } from 'src/common/decorator/user.decorator';
-import { IAuth } from '../auth/interface/auth.interface';
 import { FindLoginIdDto } from './dto/find-loginid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { IsNumber } from 'class-validator';
-import { IAccount } from './interface/account.interface';
 import { ModifyProfileDto } from './dto/modify-profile.dto';
+import { IJwtPayload } from 'src/common/types/Jwt-payload.types';
 
 @ApiTags('account Api')
 @Controller('account')
@@ -64,7 +62,7 @@ export class AccountController {
   @Delete('/')
   @UseGuards(JwtAccessGuard)
   async deleteUser(
-    @User() user: IAuth.IJwtPayload,
+    @User() user: IJwtPayload,
     @Res({ passthrough: true }) res: Response,
   ) {
     await this.accountService.deleteUser(user);
@@ -113,7 +111,7 @@ export class AccountController {
   @UseGuards(JwtAccessGuard)
   async modifyUserProfile(
     @Body() body: ModifyProfileDto,
-    @User() user: IAuth.IJwtPayload,
+    @User() user: IJwtPayload,
   ) {
     await this.accountService.modifyUserProfile(body, user);
 
