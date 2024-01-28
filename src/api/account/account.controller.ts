@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -24,6 +25,8 @@ import { User } from 'src/common/decorator/user.decorator';
 import { IAuth } from '../auth/interface/auth.interface';
 import { FindLoginIdDto } from './dto/find-loginid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { IsNumber } from 'class-validator';
+import { IAccount } from './interface/account.interface';
 
 @ApiTags('account Api')
 @Controller('account')
@@ -96,5 +99,12 @@ export class AccountController {
     await this.accountService.resetPassword(body);
 
     return ResponseEntity.SUCCESS('비밀번호 수정 썽공');
+  }
+
+  @Get('/:userIdx')
+  async getUserProfile(@Param('userIdx', ParseIntPipe) userIdx: number) {
+    const userProfile = await this.accountService.getUserProfile(userIdx);
+
+    return ResponseEntity.SUCCESS_WITH(userProfile);
   }
 }

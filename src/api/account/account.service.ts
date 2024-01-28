@@ -172,4 +172,29 @@ export class AccountService {
       },
     });
   }
+
+  async getUserProfile(
+    userIdx: number,
+  ): Promise<IAccount.IUserProfileReseponse> {
+    const result = await this.prismaService.account.findUnique({
+      where: {
+        id: userIdx,
+      },
+      select: {
+        loginId: true,
+        name: true,
+        phoneNumber: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+        profileImg: true,
+      },
+    });
+
+    if (!result) {
+      throw new BadRequestException('해당하는 사용자가 존재하지 않습니다');
+    }
+
+    return result;
+  }
 }
