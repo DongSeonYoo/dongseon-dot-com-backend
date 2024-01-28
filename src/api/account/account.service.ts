@@ -12,6 +12,7 @@ import { AuthService } from '../auth/auth.service';
 import { PROVIDER } from './account-provider.enum';
 import { IAuth } from '../auth/interface/auth.interface';
 import { FindLoginIdDto } from './dto/find-loginid.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AccountService {
@@ -155,5 +156,20 @@ export class AccountService {
     }
 
     return foundLoginId;
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
+    await this.findUserByIdx(resetPasswordDto.userIdx);
+
+    const hashedPassword = await bcrypt.hash(resetPasswordDto.newPassword, 10);
+
+    await this.prismaService.account.update({
+      where: {
+        id: resetPasswordDto.userIdx,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
   }
 }

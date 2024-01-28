@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   Res,
   UseGuards,
@@ -22,6 +23,7 @@ import { JwtAccessGuard } from '../auth/guard/jwt-access.guard';
 import { User } from 'src/common/decorator/user.decorator';
 import { IAuth } from '../auth/interface/auth.interface';
 import { FindLoginIdDto } from './dto/find-loginid.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @ApiTags('account Api')
 @Controller('account')
@@ -85,5 +87,14 @@ export class AccountController {
     const foundLoginId = await this.accountService.findLoginId(query);
 
     return ResponseEntity.SUCCESS_WITH(foundLoginId);
+  }
+
+  // 비밀번호 1차 고민중
+
+  @Put('/reset/password')
+  async resetPassword(@Body() body: ResetPasswordDto) {
+    await this.accountService.resetPassword(body);
+
+    return ResponseEntity.SUCCESS('비밀번호 수정 썽공');
   }
 }
