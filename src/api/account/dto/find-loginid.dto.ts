@@ -10,3 +10,7 @@ export class FindLoginIdDto {
   @IsNotEmpty()
   email: string;
 }
+
+export class FindLoginIdResponseDto {
+  loginId: string;
+}

@@ -5,15 +5,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
-import { SignupRequestDto } from './dto/signup.dto';
-import { SigninRequestDto } from './dto/signin.dto';
-import { IAccount } from './interface/account.interface';
+import { SignupRequestDto, SignupResponseDto } from './dto/signup.dto';
+import { SigninRequestDto, SigninResponseDto } from './dto/signin.dto';
 import { AuthService } from '../auth/auth.service';
 import { PROVIDER } from './account-provider.enum';
-import { IAuth } from '../auth/interface/auth.interface';
-import { FindLoginIdDto } from './dto/find-loginid.dto';
+import { FindLoginIdDto, FindLoginIdResponseDto } from './dto/find-loginid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ModifyProfileDto } from './dto/modify-profile.dto';
+import { UserProfileReseponse } from './dto/userprofileimg.dto';
+import { IJwtPayload } from 'src/common/types/Jwt-payload.types';
 
 @Injectable()
 export class AccountService {
@@ -22,9 +22,7 @@ export class AccountService {
     private readonly authService: AuthService,
   ) {}
 
-  async signup(
-    signupAccountDto: SignupRequestDto,
-  ): Promise<IAccount.ISignupResponse> {
+  async signup(signupAccountDto: SignupRequestDto): Promise<SignupResponseDto> {
     await this.checkDuplicateLoginId(signupAccountDto.loginId);
     await this.checkDuplicateEmail(signupAccountDto.email);
 
@@ -46,9 +44,7 @@ export class AccountService {
     };
   }
 
-  async signIn(
-    signinAccountDto: SigninRequestDto,
-  ): Promise<IAccount.ISigninResponse> {
+  async signIn(signinAccountDto: SigninRequestDto): Promise<SigninResponseDto> {
     const { loginId, password } = signinAccountDto;
 
     // 1. 해당하는 아이디를 가진 사용자가 있는지 확인
@@ -99,7 +95,7 @@ export class AccountService {
     return foundUser;
   }
 
-  async deleteUser(user: IAuth.IJwtPayload): Promise<void> {
+  async deleteUser(user: IJwtPayload): Promise<void> {
     const foundUser = await this.findUserByIdx(user.id);
 
     await this.prismaService.account.update({
@@ -111,7 +107,6 @@ export class AccountService {
       where: {
         id: user.id,
       },
-      select: {},
     });
   }
 
@@ -141,7 +136,7 @@ export class AccountService {
 
   async findLoginId(
     findLoginIdDto: FindLoginIdDto,
-  ): Promise<IAccount.IFindLoginIdResponse> {
+  ): Promise<FindLoginIdResponseDto> {
     const foundLoginId = await this.prismaService.account.findUnique({
       where: {
         ...findLoginIdDto,
@@ -156,7 +151,9 @@ export class AccountService {
       throw new NotFoundException('해당하는 회원이 존재하지 않습니다');
     }
 
-    return foundLoginId;
+    return {
+      loginId: foundLoginId.loginId,
+    };
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
@@ -174,9 +171,7 @@ export class AccountService {
     });
   }
 
-  async getUserProfile(
-    userIdx: number,
-  ): Promise<IAccount.IUserProfileReseponse> {
+  async getUserProfile(userIdx: number): Promise<UserProfileReseponse> {
     const result = await this.prismaService.account.findUnique({
       where: {
         id: userIdx,
@@ -201,7 +196,7 @@ export class AccountService {
 
   async modifyUserProfile(
     modifyProfileDto: ModifyProfileDto,
-    user: IAuth.IJwtPayload,
+    user: IJwtPayload,
   ) {
     await this.prismaService.account.update({
       where: {
