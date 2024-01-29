@@ -4,13 +4,13 @@ import {
   IsJSON,
   IsNotEmpty,
   IsOptional,
-  IsString,
   Matches,
 } from 'class-validator';
+import { ACCOUNT_REGEX } from '../constant/account.regex';
 
 export class SignupRequestDto {
   @ApiProperty()
-  @Matches(/^[A-Za-z0-9]{5,20}$/, {
+  @Matches(ACCOUNT_REGEX.LOGIN_ID, {
     message: '아이디 형식이 올바르지 않습니다',
   })
   @IsNotEmpty({
@@ -18,24 +18,26 @@ export class SignupRequestDto {
   })
   loginId: string;
 
-  // @Matches(/^.{10,20}$/, {
+  @ApiProperty()
+  // @Matches(ACCOUNT_REGEX.PASSWORD, {
   //   message: '비밀번호 형식이 올바르지 않습니다',
   // })
-  @ApiProperty()
   @IsNotEmpty({
     message: '비밀번호가 입력되지 않았습니다',
   })
   password: string;
 
   @ApiProperty()
-  @IsEmail()
+  @Matches(ACCOUNT_REGEX.EMAIL, {
+    message: '이메일 형식이 올바르지 않습니다',
+  })
   @IsNotEmpty({
     message: '이메일이 입력되지 않았습니다',
   })
   email: string;
 
   @ApiProperty()
-  @Matches(/^[가-힣a-zA-Z]{2,8}$/, {
+  @Matches(ACCOUNT_REGEX.NAME, {
     message: '이름이 올바르지 않습니다',
   })
   @IsNotEmpty({
@@ -44,7 +46,7 @@ export class SignupRequestDto {
   name: string;
 
   @ApiProperty()
-  @Matches(/^0\d{10}$/, {
+  @Matches(ACCOUNT_REGEX.PHONE_NUMBER, {
     message: '전화번호가 올바르지 않습니다',
   })
   @IsNotEmpty({

@@ -1,7 +1,8 @@
-import { IsNotEmpty, Matches } from 'class-validator';
+import { IsNotEmpty, IsNumber, Matches } from 'class-validator';
 
 export class ResetPasswordDto {
   @IsNotEmpty()
+  @IsNumber()
   userIdx: number;
 
   @IsNotEmpty()

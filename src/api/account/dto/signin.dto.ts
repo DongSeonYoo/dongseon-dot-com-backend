@@ -1,4 +1,5 @@
-import { IsJSON, IsNotEmpty } from 'class-validator';
+import { IsJSON, IsNotEmpty, Matches } from 'class-validator';
+import { ACCOUNT_REGEX } from '../constant/account.regex';
 
 export class SigninRequestDto {
   @IsNotEmpty()
