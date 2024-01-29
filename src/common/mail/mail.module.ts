@@ -14,9 +14,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
           pass: process.env.NODEMAILER_PW,
         },
       },
-      defaults: {
-        from: '"nest-modules" <modules@nestjs.com>',
-      },
     }),
   ],
   exports: [MailService],
