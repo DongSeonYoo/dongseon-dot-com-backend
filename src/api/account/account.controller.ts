@@ -26,11 +26,16 @@ import { FindLoginIdDto } from './dto/find-loginid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ModifyProfileDto } from './dto/modify-profile.dto';
 import { IJwtPayload } from 'src/common/types/Jwt-payload.types';
+import { SendVerifyCodeDto } from './dto/send-code.dto';
+import { AuthService } from '../auth/auth.service';
 
 @ApiTags('account Api')
 @Controller('account')
 export class AccountController {
-  constructor(private readonly accountService: AccountService) {}
+  constructor(
+    private readonly accountService: AccountService,
+    private readonly authService: AuthService,
+  ) {}
 
   @ApiResponse({ type: SignupResponseDto })
   @Post('/signup')
@@ -57,6 +62,12 @@ export class AccountController {
     res.clearCookie('accessToken');
 
     return ResponseEntity.SUCCESS('로그아웃 성공요');
+  }
+
+  @Get('/detail')
+  @UseGuards(JwtAccessGuard)
+  async viewDetailProfile(@User() user: IJwtPayload) {
+    return this.accountService.viewDetailProfile(user);
   }
 
   @Delete('/')
@@ -100,7 +111,7 @@ export class AccountController {
     return ResponseEntity.SUCCESS('비밀번호 수정 썽공');
   }
 
-  @Get('/:userIdx')
+  @Get('/profile/:userIdx')
   async getUserProfile(@Param('userIdx', ParseIntPipe) userIdx: number) {
     const userProfile = await this.accountService.getUserProfile(userIdx);
 
@@ -117,4 +128,7 @@ export class AccountController {
 
     return ResponseEntity.SUCCESS('수정 성공요');
   }
+
+  @Post('/email/code')
+  async sendAuthCode(@Body() { email }: SendVerifyCodeDto) {}
 }
