@@ -12,8 +12,9 @@ import { PROVIDER } from './account-provider.enum';
 import { FindLoginIdDto, FindLoginIdResponseDto } from './dto/find-loginid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ModifyProfileDto } from './dto/modify-profile.dto';
-import { UserProfileReseponse } from './dto/userprofileimg.dto';
+import { ViewUserProfileResponse } from './dto/view-profile.dto';
 import { IJwtPayload } from 'src/common/types/Jwt-payload.types';
+import { ViewDetailProfileResponseDto } from './dto/profile-detail.dto';
 
 @Injectable()
 export class AccountService {
@@ -80,28 +81,30 @@ export class AccountService {
     return { accessToken };
   }
 
-  async findUserByIdx(userIdx: number) {
-    const foundUser = await this.prismaService.account.findUnique({
+  async viewDetailProfile(
+    user: IJwtPayload,
+  ): Promise<ViewDetailProfileResponseDto> {
+    const userInfo = await this.prismaService.account.findUniqueOrThrow({
       where: {
-        id: userIdx,
-        deletedAt: null,
+        id: user.id,
       },
     });
 
-    if (!foundUser) {
-      throw new BadRequestException('해당하는 사용자가 존재하지 않습니다');
-    }
-
-    return foundUser;
+    return {
+      loginId: userInfo.loginId,
+      email: userInfo.email,
+      name: userInfo.name,
+      phoneNumber: userInfo.phoneNumber,
+      profileImg: userInfo.profileImg,
+      updatedAt: userInfo.updatedAt,
+      createdAt: userInfo.createdAt,
+      deletedAt: userInfo.deletedAt,
+    };
   }
 
   async deleteUser(user: IJwtPayload): Promise<void> {
-    const foundUser = await this.findUserByIdx(user.id);
-
     await this.prismaService.account.update({
       data: {
-        loginId: foundUser.loginId,
-        email: foundUser.email,
         deletedAt: new Date(),
       },
       where: {
@@ -157,32 +160,29 @@ export class AccountService {
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
-    await this.findUserByIdx(resetPasswordDto.userIdx);
-
     const hashedPassword = await bcrypt.hash(resetPasswordDto.newPassword, 10);
 
     await this.prismaService.account.update({
-      where: {
-        id: resetPasswordDto.userIdx,
-      },
       data: {
         password: hashedPassword,
+      },
+      where: {
+        id: resetPasswordDto.userIdx,
       },
     });
   }
 
-  async getUserProfile(userIdx: number): Promise<UserProfileReseponse> {
+  async getUserProfile(userIdx: number): Promise<ViewUserProfileResponse> {
     const result = await this.prismaService.account.findUnique({
       where: {
         id: userIdx,
+        deletedAt: null,
       },
       select: {
         loginId: true,
         name: true,
-        phoneNumber: true,
         email: true,
         createdAt: true,
-        updatedAt: true,
         profileImg: true,
       },
     });
@@ -191,7 +191,13 @@ export class AccountService {
       throw new BadRequestException('해당하는 사용자가 존재하지 않습니다');
     }
 
-    return result;
+    return {
+      loginId: result.loginId,
+      name: result.name,
+      email: result.email,
+      createdAt: result.createdAt,
+      profileImg: result.profileImg,
+    };
   }
 
   async modifyUserProfile(
@@ -206,5 +212,9 @@ export class AccountService {
         ...modifyProfileDto,
       },
     });
+  }
+
+  async sendVerifyCode(email: string) {
+    this.authService;
   }
 }
