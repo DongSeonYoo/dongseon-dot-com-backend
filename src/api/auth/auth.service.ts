@@ -61,11 +61,11 @@ export class AuthService {
       | undefined;
 
     if (!code) {
-      throw new BadRequestException('인증번호가 만료되었습니다');
+      throw new BadRequestException('인증번호가 일치하지 않습니다');
     }
 
     if (code !== dto.code) {
-      throw new BadRequestException('인증에 실패하였습니다');
+      throw new BadRequestException('인증번호가 일치하지 않습니다');
     }
 
     await this.redisService.deleteCode(dto.email);

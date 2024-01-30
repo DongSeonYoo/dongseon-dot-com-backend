@@ -1,4 +1,4 @@
-import { Body, Controller, Get, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ResponseEntity } from 'src/common/dto/common-response.dto';
 import { SendAuthEmailDto } from './dto/send-auth-email.dto';
@@ -15,6 +15,7 @@ export class AuthController {
     return ResponseEntity.SUCCESS('인증번호 전송 완뇨');
   }
 
+  @HttpCode(200)
   @Post('/check-auth-email')
   async checkAuthCode(@Body() body: CheckAuthCodeDto) {
     await this.authService.checkVerifyCode(body);
