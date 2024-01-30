@@ -6,5 +6,5 @@ export class ViewDetailProfileResponseDto {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
-  profileImg: string;
+  profileImg: string | null;
 }

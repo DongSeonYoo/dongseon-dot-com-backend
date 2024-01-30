@@ -3,5 +3,5 @@ export class ViewUserProfileResponse {
   name: string;
   email: string;
   createdAt: Date;
-  profileImg: string;
+  profileImg: string | null;
 }

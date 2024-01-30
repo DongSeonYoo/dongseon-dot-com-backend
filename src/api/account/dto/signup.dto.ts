@@ -46,19 +46,12 @@ export class SignupRequestDto {
   name: string;
 
   @ApiProperty()
-  @Matches(ACCOUNT_REGEX.PHONE_NUMBER, {
-    message: '전화번호가 올바르지 않습니다',
-  })
-  @IsNotEmpty({
-    message: '전화번호가 입력되지 않았습니다',
-  })
-  phoneNumber: string;
+  @IsOptional()
+  phoneNumber?: string | null;
 
   //   @Matches(/^0\d{10}$/)
   @ApiProperty()
-  @IsNotEmpty({
-    message: '프로필 사진이 입력되지 않았습니다',
-  })
+  @IsOptional()
   profileImg: string;
 
   //   @Matches(/^0\d{10}$/)
