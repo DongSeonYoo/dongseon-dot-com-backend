@@ -125,6 +125,21 @@ export class AccountService {
     }
   }
 
+  async checkDuplicatePhoneNumber(phoneNumber: string): Promise<void> {
+    const foundPhoneNumber = await this.prismaService.account.findFirst({
+      where: {
+        phoneNumber: phoneNumber,
+      },
+      select: {
+        phoneNumber: true,
+      },
+    });
+
+    if (foundPhoneNumber) {
+      throw new BadRequestException('이미 존재하는 전화번호입니다');
+    }
+  }
+
   async checkDuplicateEmail(email: string) {
     const foundAccount = await this.prismaService.account.findUnique({
       where: {

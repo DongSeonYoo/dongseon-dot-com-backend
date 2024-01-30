@@ -88,6 +88,13 @@ export class AccountController {
     return ResponseEntity.SUCCESS('사용 가능한 아이디입니다');
   }
 
+  @Get('/duplicate/phone-number/:phoneNumber')
+  async checkDuplicatePhoneNumber(@Param('phoneNumber') phoneNumber: string) {
+    await this.accountService.checkDuplicatePhoneNumber(phoneNumber);
+
+    return ResponseEntity.SUCCESS('사용 가능한 전화번호입니다');
+  }
+
   @Get('/duplicate/email/:email')
   async checkDulicateEmail(@Param('email') email: string) {
     await this.accountService.checkDuplicateEmail(email);
