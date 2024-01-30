@@ -84,11 +84,15 @@ export class AccountService {
   async viewDetailProfile(
     user: IJwtPayload,
   ): Promise<ViewDetailProfileResponseDto> {
-    const userInfo = await this.prismaService.account.findUniqueOrThrow({
+    const userInfo = await this.prismaService.account.findUnique({
       where: {
         id: user.id,
       },
     });
+
+    if (!userInfo) {
+      throw new NotFoundException('해당하는 유저를 찾지 못했읍니다');
+    }
 
     return {
       loginId: userInfo.loginId,
