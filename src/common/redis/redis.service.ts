@@ -9,12 +9,16 @@ export class RedisService {
     private readonly cacheManager: Cache,
   ) {}
 
-  async getTest(key: string) {
-    const result = await this.cacheManager.get(key);
-    return result;
+  async getAuthCode(email: string) {
+    const code = await this.cacheManager.get(email);
+    return code;
   }
 
-  async setTest(key: string, value: string) {
-    await this.cacheManager.set(key, value, 36000);
+  async setAuthCode(email: string, code: number) {
+    await this.cacheManager.set(email, code, 360000);
+  }
+
+  async deleteCode(email: string) {
+    await this.cacheManager.del(email);
   }
 }

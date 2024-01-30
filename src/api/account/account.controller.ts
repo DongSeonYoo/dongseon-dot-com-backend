@@ -26,7 +26,6 @@ import { FindLoginIdDto } from './dto/find-loginid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ModifyProfileDto } from './dto/modify-profile.dto';
 import { IJwtPayload } from 'src/common/types/Jwt-payload.types';
-import { SendVerifyCodeDto } from './dto/send-code.dto';
 import { AuthService } from '../auth/auth.service';
 
 @ApiTags('account Api')
@@ -135,7 +134,4 @@ export class AccountController {
 
     return ResponseEntity.SUCCESS('수정 성공요');
   }
-
-  @Post('/email/code')
-  async sendAuthCode(@Body() { email }: SendVerifyCodeDto) {}
 }
