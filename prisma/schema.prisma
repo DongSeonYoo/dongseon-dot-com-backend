@@ -13,7 +13,7 @@ model Account {
   password    String      @db.Char(60)
   email       String      @db.VarChar(256) @unique
   name        String      @db.VarChar(10)
-  phoneNumber String      @map("phone_number") @db.Char(11)
+  phoneNumber String?      @map("phone_number") @db.Char(11)
   profileImg  String      @map("profile_img")
   provider    String?     @db.VarChar(10)
   createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)

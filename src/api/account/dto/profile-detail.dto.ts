@@ -1,7 +1,7 @@
 export class ViewDetailProfileResponseDto {
   loginId: string;
   name: string;
-  phoneNumber: string;
+  phoneNumber: string | null;
   email: string;
   createdAt: Date;
   updatedAt: Date;
