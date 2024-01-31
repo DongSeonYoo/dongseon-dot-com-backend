@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AccountModule } from './api/account/account.module';
 import { AuthModule } from './api/auth/auth.module';
 import { PrismaService } from './common/prisma/prisma.service';
+import { PostModule } from './api/post/post.module';
+import { UploadModule } from './api/upload/upload.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { PrismaService } from './common/prisma/prisma.service';
     }),
     AccountModule,
     AuthModule,
+    PostModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
