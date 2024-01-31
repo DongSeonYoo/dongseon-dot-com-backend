@@ -29,6 +29,7 @@ export class AuthService {
       select: {
         id: true,
         email: true,
+        loginId: true,
       },
     });
 
@@ -39,6 +40,7 @@ export class AuthService {
     return {
       id: findUserResult.id,
       email: findUserResult.email,
+      loginId: findUserResult.loginId,
     };
   }
 

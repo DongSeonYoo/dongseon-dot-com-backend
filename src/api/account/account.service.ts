@@ -58,6 +58,7 @@ export class AccountService {
         id: true,
         email: true,
         password: true,
+        loginId: true,
       },
     });
 
