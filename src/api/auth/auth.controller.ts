@@ -3,7 +3,9 @@ import { AuthService } from './auth.service';
 import { ResponseEntity } from 'src/common/dto/common-response.dto';
 import { SendAuthEmailDto } from './dto/send-auth-email.dto';
 import { CheckAuthCodeDto } from './dto/check-auth-code.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -19,7 +20,7 @@ import {
 } from './dto/signup.dto';
 import { SigninRequestDto } from './dto/signin.dto';
 import { ResponseEntity } from 'src/common/dto/common-response.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { JwtAccessGuard } from '../auth/guard/jwt-access.guard';
 import { User } from 'src/common/decorator/user.decorator';
 import { FindLoginIdDto } from './dto/find-loginid.dto';
@@ -28,7 +29,7 @@ import { ModifyProfileDto } from './dto/modify-profile.dto';
 import { IJwtPayload } from 'src/common/types/Jwt-payload.types';
 import { AuthService } from '../auth/auth.service';
 
-@ApiTags('account Api')
+@ApiTags('account')
 @Controller('account')
 export class AccountController {
   constructor(
@@ -38,7 +39,7 @@ export class AccountController {
 
   @ApiResponse({ type: SignupResponseDto })
   @Post('/signup')
-  async signup(@Body() body: SignupRequestDto) {
+  async signup(@Body() body: SignupRequestDto, @Req() req: Request) {
     const signupResponse = await this.accountService.signup(body);
 
     return ResponseEntity.SUCCESS_WITH(signupResponse, '회원가입 성공요');
