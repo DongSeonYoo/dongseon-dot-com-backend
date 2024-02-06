@@ -15,6 +15,7 @@ import { ModifyProfileDto } from './dto/modify-profile.dto';
 import { ViewUserProfileResponse } from './dto/view-profile.dto';
 import { IJwtPayload } from 'src/common/types/Jwt-payload.types';
 import { ViewDetailProfileResponseDto } from './dto/profile-detail.dto';
+import { IAccount } from 'src/common/interface/IAccount';
 
 @Injectable()
 export class AccountService {
@@ -23,7 +24,7 @@ export class AccountService {
     private readonly authService: AuthService,
   ) {}
 
-  async signup(signupAccountDto: SignupRequestDto): Promise<SignupResponseDto> {
+  async signup(signupAccountDto: SignupRequestDto): Promise<IAccount.ISignup> {
     await this.checkDuplicateLoginId(signupAccountDto.loginId);
     await this.checkDuplicateEmail(signupAccountDto.email);
 
@@ -45,7 +46,7 @@ export class AccountService {
     };
   }
 
-  async signIn(signinAccountDto: SigninRequestDto): Promise<SigninResponseDto> {
+  async signIn(signinAccountDto: SigninRequestDto): Promise<IAccount.ISignin> {
     const { loginId, password } = signinAccountDto;
 
     // 1. 해당하는 아이디를 가진 사용자가 있는지 확인
@@ -232,9 +233,5 @@ export class AccountService {
         ...modifyProfileDto,
       },
     });
-  }
-
-  async sendVerifyCode(email: string) {
-    this.authService;
   }
 }

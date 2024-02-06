@@ -12,7 +12,7 @@ import { JwtAccessGuard } from '../auth/guard/jwt-access.guard';
 import { User } from 'src/common/decorator/user.decorator';
 import { IJwtPayload } from 'src/common/types/Jwt-payload.types';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ResponseEntity } from 'src/common/dto/common-response.dto';
+import { ResponseEntity } from 'src/common/common-response';
 
 @ApiTags('Post')
 @Controller('post')

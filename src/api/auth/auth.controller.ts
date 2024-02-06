@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ResponseEntity } from 'src/common/dto/common-response.dto';
+import { ResponseEntity } from 'src/common/common-response';
 import { SendAuthEmailDto } from './dto/send-auth-email.dto';
 import { CheckAuthCodeDto } from './dto/check-auth-code.dto';
 import { ApiTags } from '@nestjs/swagger';

@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   ParseIntPipe,
   Post,
@@ -13,13 +14,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AccountService } from './account.service';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   SignupRequestDto as SignupRequestDto,
   SignupResponseDto,
 } from './dto/signup.dto';
-import { SigninRequestDto } from './dto/signin.dto';
-import { ResponseEntity } from 'src/common/dto/common-response.dto';
+import { SigninRequestDto, SigninResponseDto } from './dto/signin.dto';
+import { ResponseEntity } from 'src/common/common-response';
 import { Request, Response } from 'express';
 import { JwtAccessGuard } from '../auth/guard/jwt-access.guard';
 import { User } from 'src/common/decorator/user.decorator';
@@ -37,8 +38,18 @@ export class AccountController {
     private readonly authService: AuthService,
   ) {}
 
-  @ApiResponse({ type: SignupResponseDto })
   @Post('/signup')
+  @HttpCode(200)
+  @ApiOperation({
+    summary: '유저 생성(회원가입) api',
+    description: '유저를 생성한다',
+  })
+  @ApiResponse({
+    type: SignupResponseDto,
+    description: '회원가입 성공',
+    status: 200,
+  })
+  @ApiBody({ type: SignupRequestDto })
   async signup(@Body() body: SignupRequestDto, @Req() req: Request) {
     const signupResponse = await this.accountService.signup(body);
 
@@ -46,14 +57,25 @@ export class AccountController {
   }
 
   @Post('/login')
+  @HttpCode(200)
+  @ApiOperation({
+    summary: '로그인 api',
+    description: '로그인을 한다',
+  })
+  @ApiResponse({
+    type: SigninResponseDto,
+    description: '로그인 성공',
+    status: 200,
+  })
+  @ApiBody({ type: SigninRequestDto })
   async login(
     @Body() body: SigninRequestDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken } = await this.accountService.signIn(body);
-    res.cookie('accessToken', accessToken);
+    const accessToken = await this.accountService.signIn(body);
+    res.cookie('accessToken', accessToken.accessToken);
 
-    return ResponseEntity.SUCCESS();
+    return ResponseEntity.SUCCESS_WITH(accessToken);
   }
 
   @Post('/logout')

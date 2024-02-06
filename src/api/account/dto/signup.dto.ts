@@ -7,6 +7,7 @@ import {
   Matches,
 } from 'class-validator';
 import { ACCOUNT_REGEX } from '../constant/account.regex';
+import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 
 export class SignupRequestDto {
   @ApiProperty()
@@ -45,9 +46,11 @@ export class SignupRequestDto {
   })
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
   @IsOptional()
-  phoneNumber?: string | null;
+  phoneNumber?: string;
 
   //   @Matches(/^0\d{10}$/)
   @ApiProperty()
@@ -55,13 +58,15 @@ export class SignupRequestDto {
   profileImg: string;
 
   //   @Matches(/^0\d{10}$/)
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
   @IsOptional()
-  provider?: string | null;
+  provider?: string;
 }
 
-export class SignupResponseDto {
-  @ApiProperty()
+export class SignupResponseDto extends CommonResponseDto {
   @IsJSON()
+  @ApiProperty()
   userIdx: number;
 }
