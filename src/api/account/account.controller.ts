@@ -14,7 +14,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AccountService } from './account.service';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiCookieAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   SignupRequestDto as SignupRequestDto,
   SignupResponseDto,
@@ -29,6 +35,8 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ModifyProfileDto } from './dto/modify-profile.dto';
 import { IJwtPayload } from 'src/common/types/Jwt-payload.types';
 import { AuthService } from '../auth/auth.service';
+import { ViewDetailProfileResponseDto } from './dto/profile-detail.dto';
+import { ViewUserProfileResponse } from './dto/view-profile.dto';
 
 @ApiTags('account')
 @Controller('account')
@@ -80,6 +88,15 @@ export class AccountController {
 
   @Post('/logout')
   @UseGuards(JwtAccessGuard)
+  @ApiCookieAuth('accessToken')
+  @ApiOperation({
+    summary: '로그아웃 api',
+    description: 'response 헤더에 담겨있는 accessToken을 삭제한다',
+  })
+  @ApiResponse({
+    description: '로그아웃 성공',
+    status: 200,
+  })
   async logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('accessToken');
 
@@ -88,8 +105,17 @@ export class AccountController {
 
   @Get('/detail')
   @UseGuards(JwtAccessGuard)
+  @ApiOperation({
+    summary: '사용자 프로필 조회',
+    description: '로그인 한 사용자의 프로필을 보여줌',
+  })
+  @ApiResponse({
+    type: ViewUserProfileResponse,
+  })
   async viewDetailProfile(@User() user: IJwtPayload) {
-    return this.accountService.viewDetailProfile(user);
+    const profile = await this.accountService.viewDetailProfile(user);
+
+    return ResponseEntity.SUCCESS_WITH(profile);
   }
 
   @Delete('/')
