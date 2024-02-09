@@ -7,7 +7,7 @@ import {
   Matches,
 } from 'class-validator';
 import { ACCOUNT_REGEX } from '../constant/account.regex';
-import { CommonResponseDto } from 'src/common/dto/common-response.dto';
+// import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 
 export class SignupRequestDto {
   @ApiProperty()
@@ -65,7 +65,7 @@ export class SignupRequestDto {
   provider?: string;
 }
 
-export class SignupResponseDto extends CommonResponseDto {
+export class SignupResponseDto {
   @IsJSON()
   @ApiProperty()
   userIdx: number;

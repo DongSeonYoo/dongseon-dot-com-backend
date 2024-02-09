@@ -1,7 +1,5 @@
 import { IsJSON, IsNotEmpty, Matches } from 'class-validator';
-import { ACCOUNT_REGEX } from '../constant/account.regex';
 import { ApiProperty } from '@nestjs/swagger';
-import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 
 export class SigninRequestDto {
   @IsNotEmpty()
@@ -13,8 +11,8 @@ export class SigninRequestDto {
   password: string;
 }
 
-export class SigninResponseDto extends CommonResponseDto {
+export class SigninResponseDto {
   @IsJSON()
-  @ApiProperty({ description: '유저의 accessToken' })
+  @ApiProperty({ description: '유저의 accessToken', name: 'accessToken' })
   accessToken: string;
 }

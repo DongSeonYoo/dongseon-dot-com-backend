@@ -9,13 +9,15 @@ import { SignupRequestDto, SignupResponseDto } from './dto/signup.dto';
 import { SigninRequestDto, SigninResponseDto } from './dto/signin.dto';
 import { AuthService } from '../auth/auth.service';
 import { PROVIDER } from './account-provider.enum';
-import { FindLoginIdDto, FindLoginIdResponseDto } from './dto/find-loginid.dto';
-import { ResetPasswordDto } from './dto/reset-password.dto';
+import {
+  FindLoginIdRequestDto,
+  FindLoginIdResponseDto,
+} from './dto/find-loginid.dto';
+import { ResetPasswordRequestDto } from './dto/reset-password.dto';
 import { ModifyProfileDto } from './dto/modify-profile.dto';
-import { ViewUserProfileResponse } from './dto/view-profile.dto';
+import { ViewUserProfileResponseDto } from './dto/view-profile.dto';
 import { IJwtPayload } from 'src/common/types/Jwt-payload.types';
 import { ViewDetailProfileResponseDto } from './dto/profile-detail.dto';
-import { IAccount } from 'src/common/interface/IAccount';
 
 @Injectable()
 export class AccountService {
@@ -24,7 +26,7 @@ export class AccountService {
     private readonly authService: AuthService,
   ) {}
 
-  async signup(signupAccountDto: SignupRequestDto): Promise<IAccount.ISignup> {
+  async signup(signupAccountDto: SignupRequestDto): Promise<SignupResponseDto> {
     await this.checkDuplicateLoginId(signupAccountDto.loginId);
     await this.checkDuplicateEmail(signupAccountDto.email);
 
@@ -46,7 +48,7 @@ export class AccountService {
     };
   }
 
-  async signIn(signinAccountDto: SigninRequestDto): Promise<IAccount.ISignin> {
+  async signIn(signinAccountDto: SigninRequestDto): Promise<SigninResponseDto> {
     const { loginId, password } = signinAccountDto;
 
     // 1. 해당하는 아이디를 가진 사용자가 있는지 확인
@@ -90,6 +92,15 @@ export class AccountService {
       where: {
         id: user.id,
       },
+      select: {
+        loginId: true,
+        email: true,
+        name: true,
+        phoneNumber: true,
+        profileImg: true,
+        updatedAt: true,
+        createdAt: true,
+      },
     });
 
     if (!userInfo) {
@@ -104,7 +115,6 @@ export class AccountService {
       profileImg: userInfo.profileImg,
       updatedAt: userInfo.updatedAt,
       createdAt: userInfo.createdAt,
-      deletedAt: userInfo.deletedAt,
     };
   }
 
@@ -159,7 +169,7 @@ export class AccountService {
   }
 
   async findLoginId(
-    findLoginIdDto: FindLoginIdDto,
+    findLoginIdDto: FindLoginIdRequestDto,
   ): Promise<FindLoginIdResponseDto> {
     const foundLoginId = await this.prismaService.account.findUnique({
       where: {
@@ -180,7 +190,9 @@ export class AccountService {
     };
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
+  async resetPassword(
+    resetPasswordDto: ResetPasswordRequestDto,
+  ): Promise<void> {
     const hashedPassword = await bcrypt.hash(resetPasswordDto.newPassword, 10);
 
     await this.prismaService.account.update({
@@ -193,7 +205,7 @@ export class AccountService {
     });
   }
 
-  async getUserProfile(userIdx: number): Promise<ViewUserProfileResponse> {
+  async getUserProfile(userIdx: number): Promise<ViewUserProfileResponseDto> {
     const result = await this.prismaService.account.findUnique({
       where: {
         id: userIdx,
@@ -224,7 +236,7 @@ export class AccountService {
   async modifyUserProfile(
     modifyProfileDto: ModifyProfileDto,
     user: IJwtPayload,
-  ) {
+  ): Promise<void> {
     await this.prismaService.account.update({
       where: {
         id: user.id,

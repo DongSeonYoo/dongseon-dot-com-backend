@@ -30,13 +30,16 @@ import { ResponseEntity } from 'src/common/common-response';
 import { Request, Response } from 'express';
 import { JwtAccessGuard } from '../auth/guard/jwt-access.guard';
 import { User } from 'src/common/decorator/user.decorator';
-import { FindLoginIdDto } from './dto/find-loginid.dto';
-import { ResetPasswordDto } from './dto/reset-password.dto';
+import {
+  FindLoginIdRequestDto,
+  FindLoginIdResponseDto,
+} from './dto/find-loginid.dto';
+import { ResetPasswordRequestDto } from './dto/reset-password.dto';
 import { ModifyProfileDto } from './dto/modify-profile.dto';
 import { IJwtPayload } from 'src/common/types/Jwt-payload.types';
 import { AuthService } from '../auth/auth.service';
 import { ViewDetailProfileResponseDto } from './dto/profile-detail.dto';
-import { ViewUserProfileResponse } from './dto/view-profile.dto';
+import { ViewUserProfileResponseDto } from './dto/view-profile.dto';
 
 @ApiTags('account')
 @Controller('account')
@@ -110,7 +113,7 @@ export class AccountController {
     description: '로그인 한 사용자의 프로필을 보여줌',
   })
   @ApiResponse({
-    type: ViewUserProfileResponse,
+    type: ViewUserProfileResponseDto,
   })
   async viewDetailProfile(@User() user: IJwtPayload) {
     const profile = await this.accountService.viewDetailProfile(user);
@@ -151,7 +154,14 @@ export class AccountController {
   }
 
   @Get('/find-id')
-  async findLoginId(@Query() query: FindLoginIdDto) {
+  @ApiOperation({
+    summary: '아이디 찾기 api',
+    description: '이름, 전화번호, 이메일을 받아 해당하는 아이디를 찾습니다',
+  })
+  @ApiResponse({
+    type: FindLoginIdResponseDto,
+  })
+  async findLoginId(@Query() query: FindLoginIdRequestDto) {
     const foundLoginId = await this.accountService.findLoginId(query);
 
     return ResponseEntity.SUCCESS_WITH(foundLoginId);
@@ -160,7 +170,7 @@ export class AccountController {
   // 비밀번호 1차 고민중
 
   @Put('/reset/password')
-  async resetPassword(@Body() body: ResetPasswordDto) {
+  async resetPassword(@Body() body: ResetPasswordRequestDto) {
     await this.accountService.resetPassword(body);
 
     return ResponseEntity.SUCCESS('비밀번호 수정 썽공');
