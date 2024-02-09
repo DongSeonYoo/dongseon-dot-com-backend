@@ -6,7 +6,6 @@ import { AccountModule } from './api/account/account.module';
 import { AuthModule } from './api/auth/auth.module';
 import { PostModule } from './api/post/post.module';
 import { UploadModule } from './api/upload/upload.module';
-import { PresignedUrlModule } from './api/presigned-url/presigned-url.module';
 
 @Module({
   imports: [
@@ -17,7 +16,6 @@ import { PresignedUrlModule } from './api/presigned-url/presigned-url.module';
     AuthModule,
     PostModule,
     UploadModule,
-    PresignedUrlModule,
   ],
   controllers: [AppController],
   providers: [AppService],
