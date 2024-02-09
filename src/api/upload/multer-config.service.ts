@@ -8,7 +8,9 @@ import { ConfigService } from '@nestjs/config';
 import { MulterOptionsFactory } from '@nestjs/platform-express';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import s3Storage from 'multer-s3';
+import path from 'path';
 
+const allowedExtensions = ['.png', '.jpg', '.jpeg'];
 @Injectable()
 export class MulterOptionService implements MulterOptionsFactory {
   private readonly s3: any;
@@ -33,14 +35,15 @@ export class MulterOptionService implements MulterOptionsFactory {
         acl: 'public-read',
         contentType: s3Storage.AUTO_CONTENT_TYPE,
         key: (req, file, cb) => {
+          const extension = path.extname(file.originalname);
+          if (!allowedExtensions.includes(extension)) {
+            return cb(new BadRequestException('확장자를 확인해주세요'));
+          }
           this.handleFileKey(req, file, cb);
         },
       }),
       limits: {
         fileSize: 1024 * 1024 * 5,
-      },
-      fileFilter(req, file, callback) {
-        callback(null, true);
       },
     };
   }
@@ -56,10 +59,10 @@ export class MulterOptionService implements MulterOptionsFactory {
     let fileKey = '';
 
     if (file.fieldname === 'profileImage') {
-      fileKey = `${req.user.loginId}/profile/${new Date().getTime()}/${file.originalname}`;
+      fileKey = `${req.user.loginId}/profile/${new Date().getTime()}.${file.originalname}`;
     }
     if (file.fieldname === 'postImages') {
-      fileKey = `${req.user.loginId}/post/${new Date().getTime()}/${file.originalname}`;
+      fileKey = `${req.user.loginId}/post/${new Date().getTime()}.${file.originalname}`;
     }
 
     if (!fileKey) {
